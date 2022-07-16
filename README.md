@@ -1,40 +1,40 @@
 # WhatsApp Bot
 Demo Bot for api https://chat-api.com/en/swagger.html
 
-# Opportunities:
-- The output of the command list
-- The output of the current chat ID
-- The output of the actual server time of the bot running on
-- The output of your name
-- Sending files of different formats (PDF, jpg, doc, mp3, etc.)
-- Sending of prerecorded voice messages
-- Sending of geo-coordinates (locations)
-- Setting up a conference (group)
+# Oportunidades:
+- La salida de la lista de comandos
+- La salida del ID del chat actual
+- La salida de la hora del servidor actual del bot que se está ejecutando
+- La salida de su nombre
+- Envío de archivos de diferentes formatos (PDF, jpg, doc, mp3, etc.)
+- Envío de mensajes de voz pregrabados
+- Envío de coordenadas geográficas (ubicaciones)
+- Establecimiento de una conferencia (grupo)
 
-Attention: To make the bot fully functional, please, always keep your phone online. Your phone should not be used for the WhatsApp Web at the same time.
+Atención: Para que el bot sea totalmente funcional, por favor, mantenga siempre su teléfono en línea. Su teléfono no debe ser utilizado para el WhatsApp Web al mismo tiempo.
 
-# Getting Started
-At first, let's link up the WhatsApp with our script at once so that we can check the way code works while we're writing one. To do so, we will switch to our account and get a QR code there. Then we open WhatsApp on your mobile phone, go to Settings → WhatsApp Web → Scan the QR code.
+# Cómo empezar
+Al principio, vamos a enlazar el WhatsApp con nuestro script de una vez para poder comprobar el funcionamiento del código mientras escribimos uno. Para ello, cambiaremos a nuestra cuenta y obtendremos allí un código QR. Luego abrimos WhatsApp en el móvil, vamos a Ajustes → WhatsApp Web → Escanear el código QR.
 
-At this point, the WebHook URL must be provided for the server to trigger our script for incoming messages. The WebHook URL is a link to which JSON-data containing information about incoming messages or notifications will be sent using the POST method. So we need a server to make the bot run and this server will accept and process this information. While writing this article, we deployed the server using the FLASK microframework. The FLASK server allows us to conveniently respond to incoming requests and process them.
+En este punto, se debe proporcionar la URL del WebHook para que el servidor active nuestro script para los mensajes entrantes. La URL del WebHook es un enlace al que se enviarán datos JSON con información sobre los mensajes o notificaciones entrantes mediante el método POST. Así que necesitamos un servidor para que el bot se ejecute y este servidor aceptará y procesará esta información. Mientras escribíamos este artículo, desplegamos el servidor utilizando el microframework FLASK. El servidor FLASK nos permite responder cómodamente a las peticiones entrantes y procesarlas.
 > pip install flask
 
-Then clone the repository for yourself.
-Then go to the **wabot.py** file and change the APIUrl and token variables to yours from your personal cabinet
+Luego clona el repositorio para ti.
+A continuación, vaya a la **wabot.py** y cambie las variables APIUrl y token por las suyas de su gabinete personal
 https://app.chat-api.com/instance/
 
-Class constructor, the default one that will accept JSON, which will contain information about incoming messages (it will be received by WebHook and forwarded to the class). To see how the received JSON will look like, you can enter the easy-to-use Testing section, available in your cabinet. You can also test WebHook requests in it. https://app.chat-api.com/testing
+Constructor de la clase, el predeterminado que aceptará JSON, que contendrá información sobre los mensajes entrantes (será recibido por WebHook y reenviado a la clase). Para ver cómo será el JSON recibido, puedes entrar en la sección de pruebas, muy fácil de usar, disponible en tu gabinete. También puedes probar las peticiones de WebHook en ella. https://app.chat-api.com/testing
 
-You can view the JSON structure in the testing section of the “Check WebHook” item. It is required to run the check and send messages to your WhatsApp chat. You will see the JSON sent to the WebHook on the display.
+Puedes ver la estructura JSON en la sección de pruebas del elemento "Check WebHook". Es necesario para ejecutar la comprobación y enviar mensajes a su chat de WhatsApp. Verá el JSON enviado al WebHook en la pantalla.
 
-Copy this JSON and run our local FLASK server with the help of a debugger in the code editor or through the
+Copiamos este JSON y ejecutamos nuestro servidor FLASK local con la ayuda de un depurador en el editor de código o a través del
 > flask run
 
-In order to emulate the request to the server, we need to send a POST request from JSON, which we copied in the previous step. The request is sent to your localhost address where flask is running. Thus, we can emulate the WebHook actions and test the bot functionality.
+Para emular la petición al servidor, necesitamos enviar una petición POST de JSON, que hemos copiado en el paso anterior. La solicitud se envía a la dirección localhost donde se ejecuta flask. Así, podemos emular las acciones de WebHook y probar la funcionalidad del bot.
 
-# Functions
-## send_request 
-Used to send requests to the site API
+# Funciones
+## enviar_petición
+Se utiliza para enviar solicitudes a la API del sitio
 ```python
  def send_requests(self, method, data):
         url = f"{self.APIUrl}{method}?token={self.token}"
@@ -42,12 +42,12 @@ Used to send requests to the site API
         answer = requests.post(url, data=json.dumps(data), headers=headers)
         return answer.json()
 ```
-- **method** determines the Chat API method be called.
-- **data** contains the data required for sending.
+- **method** determina que se llame al método de la API de chat.
+- **data** contiene los datos necesarios para el envío.
 
 
-## send_message
-Used to send messages to WhatsApp chat
+## enviar_mensaje
+Se utiliza para enviar mensajes al chat de WhatsApp
 ```python
  def send_message(self, chatID, text):
         data = {"chatID" : chatID,
@@ -55,29 +55,29 @@ Used to send messages to WhatsApp chat
         answer = self.send_requests('sendMessage', data)
         return answer
 ```
-- ChatID – ID of the chat where the message should be sent
-- Text – Text of the message
+- ChatID – ID del chat al que se debe enviar el mensaje
+- Text – Texto del mensaje
 
-## show_chat_id
-Serves to answer the command "chatId". Sends user id to the chat
+## mostrar_chat_id
+Sirve para responder al comando "chatId". Envía el id de usuario al chat
 ```python
 def show_chat_id(self,chatID):
         return self.send_message(chatID, f"Chat ID : {chatID}")
 ```
-- ChatID – ID of the chat where the message should be sent
+- ChatID – ID del chat al que se debe enviar el mensaje
 
-## time
-Serves to answer the "time" command. Sends the current server time to the chat.
+## tiempo
+Sirve para responder al comando "time". Envía la hora actual del servidor al chat.
 ```python
 def time(self, chatID):
         t = datetime.datetime.now()
         time = t.strftime('%d:%m:%Y')
         return self.send_message(chatID, time)
 ```
-- ChatID – ID of the chat where the message should be sent
+- ChatID – ID del chat al que se debe enviar el mensaje
 
-## file 
-Serves to answer the command "file". Sends to the chat file, which lies on the server in the specified format
+## archivo 
+Sirve para responder al comando "file". Envía al archivo de chat, que se encuentra en el servidor en el formato especificado.
  ```python
 def file(self, chatID, format):
         availableFiles = {'doc' : 'document.doc',
@@ -96,19 +96,19 @@ def file(self, chatID, format):
                     }
             return self.send_requests('sendFile', data)
 ```
-- chatID – ID of the chat where the message should be sent
-- format – is the format of the file to be sent. All files to be sent are stored on the server-side.
+- chatID – ID del chat al que se debe enviar el mensaje
+- format – es el formato del archivo a enviar. Todos los archivos que se envían se almacenan en el lado del servidor.
 
-What's a *data*
-- ChatID – ID of the chat where the message should be sent
-- Body – direct link to the file to be sent
-- Filename – the name of the file
-- Caption – the text to be sent out together with the file
+Qué son los *data*
+- ChatID – ID del chat al que se debe enviar el mensaje
+- Body – enlace directo al archivo que se va a enviar
+- Filename – el nombre del archivo
+- Caption – el texto que se enviará junto con el archivo
 
-Generate request with the **send_requests**  and the **“sendFile”** as a parameter; submit our *data* to it.
+Generar solicitud con el **send_requests**  y el **“sendFile”** como parámetro; presentar nuestro *data* a ella.
 
 ## ptt
-Used to send a voice message to a chat room.
+Se utiliza para enviar un mensaje de voz a una sala de chat.
 ```python
 def ptt(self, chatID):        
             data = {
@@ -116,16 +116,16 @@ def ptt(self, chatID):
             "chatId" : chatID }
             return self.send_requests('sendAudio', data)
 ```
-- ChatID – ID of the chat where the message should be sent
+- ChatID – ID del chat al que se debe enviar el mensaje
 
-What's a *data*
-- “audio”  – a direct link to a file in ogg format
--  "chatID" – ID of the chat where the message should be sent
+Qué es una *data*
+- “audio”  – un enlace directo a un archivo en formato ogg
+-  "chatID" – ID del chat al que se debe enviar el mensaje
 
-Generate request with the **send_requests**  and the **“sendAudio”** as a parameter; submit our *data* to it.
+Generar solicitud con el **send_requests**  y el **“sendAudio”** como parámetro; presentar nuestro *data* con ella.
 
 ## geo
-Used to send geolocation to a chat room
+Se utiliza para enviar la geolocalización a una sala de chat
 def geo(self, chatID):
 ```python
         data = {
@@ -137,18 +137,18 @@ def geo(self, chatID):
         answer = self.send_requests('sendLocation', data)
         return answer
 ```
-- ChatID – ID of the chat where the message should be sent
+- ChatID – ID del chat al que se debe enviar el mensaje
 
-What's a *data*
-- "сhatID" – ID of the chat where the message should be sent
-- “lat” – predefined coordinates
-- “lng” – predefined coordinates
-- “address” – this is your address or any string you need.
+Qué es una *data*
+- "сhatID" – ID del chat al que se debe enviar el mensaje
+- “lat” – coordenadas predefinidas
+- “lng” – coordenadas predefinidas
+- “address” – esta es su dirección o cualquier cadena que necesite.
 
-Generate request with the **send_requests**  and the **“sendLocation”** as a parameter; submit our *data* to it.
+Generar solicitud con el **send_requests**  y el **“sendLocation”** como parámetro; presentar nuestro *data* con ella.
 
-## group
-Used to create a group of bot and user
+## grupo
+Se utiliza para crear un grupo de bots y usuarios
 ```python
 def group(self, author):
         phone = author.replace('@c.us', '')
@@ -160,16 +160,16 @@ def group(self, author):
         answer = self.send_requests('group', data)
         return answer
 ```
-- author –  the JSON body sent by the WebHook with information on the message sender.
+- author –  el cuerpo JSON enviado por el WebHook con información sobre el remitente del mensaje.
 
-What's a *data*
-- “groupName” – the conference name when created
-- “phones” – all the necessary participants' phone numbers; you can also send an array of several phone numbers
-- “messageText” – The first message in the conference
+Que es una *data*
+- “groupName” – el nombre de la conferencia cuando se crea
+- “phones” – todos los números de teléfono de los participantes necesarios; también puede enviar una matriz de varios números de teléfono
+- “messageText” – El primer mensaje de la conferencia
 
-Generate request with the **send_requests**  and the **“group”** as a parameter; submit our *data* to it.
+Generar solicitud con el **send_requests**  y el **“group”** como parámetro; presentar nuestro *data* con ella.
 
-# Incoming message processing
+# Procesamiento de mensajes entrantes
 ```python
 def processing(self):
         if self.dict_messages != []:
@@ -198,29 +198,29 @@ def processing(self):
                 else: return 'NoCommand'
 ```
 
-Now we need to arrange the bot's logic so it can react to commands and interact with the user as well.
-We will call this function for each time we receive data in our WebHook
+Ahora necesitamos organizar la lógica del bot para que pueda reaccionar a los comandos e interactuar con el usuario también.
+Llamaremos a esta función cada vez que recibamos datos en nuestro WebHook
 
-Do you remember the attribute of our bot dict_messages we created at the beginning? It has dictionaries of messages that we have accepted. The test filters out data not containing any messages. WebHook can receive a request with no message.
+Recuerdas el atributo de nuestro bot dict_messages que creamos al principio. Tiene los diccionarios de los mensajes que hemos aceptado. La prueba filtra los datos que no contienen ningún mensaje. El WebHook puede recibir una petición sin mensaje.
 ```python
  if self.dict_messages != []:
 ```
 
-We may receive several messages in a single request, and our bot must process them all. To do this, we are going through all the dictionaries which have a dict_messages list.
+Podemos recibir varios mensajes en una sola petición, y nuestro bot debe procesarlos todos. Para ello, vamos a recorrer todos los diccionarios que tienen una lista dict_messages.
 
 ```python
-for message in self.dict_messages:
+para el mensaje en self.dict_messages:
                 text = message['body'].split()
 ```
-We declare a variable text — which will be a list of words contained in our message — after entering the loop. To do this, we turn to the message dictionary using the ['body'] key to get the text of the incoming message and just call the split() function, which allows us to split the text into words.
+Declaramos una variable texto -que será una lista de palabras contenidas en nuestro mensaje- después de entrar en el bucle. Para ello, acudimos al diccionario de mensajes mediante la función ['body'] para obtener el texto del mensaje entrante y simplemente llamar a la función split(), que nos permite dividir el texto en palabras.
 
-We then check if the incoming message is not coming from ourselves by referring to the 'fromMe' key which contains True or False values and validates who the message was from. If this test is not performed, the bot may become an infinite recursion.
+A continuación, comprobamos si el mensaje entrante no procede de nosotros mismos consultando el 'fromMe' que contiene valores Verdadero o Falso y valida de quién era el mensaje. Si no se realiza esta prueba, el bot puede convertirse en una recursión infinita.
 
 ```python
  if not message['fromMe']:
 ```
 
-We now get the chat id from the same message dictionary using the ['ChatID'] key. We address the first element of the word list, put it in the lower case so that the bot could react to messages written by UPPERCASE or MiXeD cAsE and then compare it with the commands we need. Next, just parse which command came and call the corresponding functions 
+Ahora obtenemos el identificador del chat desde el mismo diccionario de mensajes utilizando la función ['ChatID'] clave. Nos dirigimos al primer elemento de la lista de palabras, lo ponemos en minúsculas para que el bot pueda reaccionar a los mensajes escritos con MAYÚSCULAS o MiXeD cAsE y luego lo comparamos con los comandos que necesitamos. A continuación, sólo hay que analizar qué comando vino y llamar a las funciones correspondientes 
 ```python
 if text[0].lower() == 'hi':
                         return self.welcome(id)
@@ -243,8 +243,8 @@ if text[0].lower() == 'hi':
                 else: return 'NoCommand'
 ```
 
-# Flask 
-To process incoming requests to our server we use this function 
+# Frasco 
+Para procesar las peticiones entrantes a nuestro servidor utilizamos esta función 
 ```python
 @app.route('/', methods=['POST'])
 def home():
@@ -253,6 +253,9 @@ def home():
         return bot.processing()
 ```
 
-We'll write the path app.route('/', methods = ['POST']) for it. This decorator means that our home function will be called every time our FLASK server is accessed through a post request by the main path.
+Escribiremos la ruta app.route('/', methods = ['POST']) para ello. Este decorador significa que nuestra función de inicio será llamada cada vez que nuestro servidor FLASK sea accedido a través de una petición de correo por la ruta principal.
 
-We are testing the fact that the server was accessed through the POST method. Now we create an instance of our bot and submit JSON data to it. So now we just call the bot.processing() method that handles requests from our object.
+Estamos comprobando que se ha accedido al servidor a través del método POST. Ahora creamos una instancia de nuestro bot y le enviamos datos JSON. Así que ahora sólo llamamos al método bot.processing() que gestiona las peticiones de nuestro objeto.
+
+
+# Traducido por Miguelagsp
