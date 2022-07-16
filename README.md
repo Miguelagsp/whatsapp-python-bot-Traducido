@@ -1,5 +1,5 @@
 # WhatsApp Bot
-Demo Bot for api https://chat-api.com/en/swagger.html
+Demo Bot para api https://chat-api.com/en/swagger.html
 
 # Oportunidades:
 - La salida de la lista de comandos
